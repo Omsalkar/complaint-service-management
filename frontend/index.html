@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resolve — Complaint Management</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">R</div><div><b>Resolve</b><small>Service Desk</small></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav active" data-view="dashboard"><span>▦</span> Dashboard</button>
+      <button class="nav" data-view="complaints"><span>▤</span> My complaints</button>
+      <button class="nav" data-view="new"><span>＋</span> New complaint</button>
+      <button class="nav" data-view="notifications"><span>♧</span> Notifications</button>
+      <button class="nav admin-only hidden" data-view="admin"><span>⚙</span> Admin desk</button>
+      <div class="sidebar-bottom"><div class="avatar" id="avatar">U</div><div class="profile"><b id="side-email">Not signed in</b><small id="side-role">Guest</small></div><button id="logout" title="Sign out" class="logout hidden">↗</button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div><div class="eyebrow">SERVICE MANAGEMENT</div><h1 id="page-title">Dashboard</h1></div><div class="top-actions"><span class="status-dot"></span><span id="connection-label">Checking connection</span><button class="button button-primary" id="header-new">＋ New complaint</button></div></header>
+      <div id="toast" class="toast hidden"></div>
+
+      <section id="auth-panel" class="auth-layout">
+        <div class="auth-copy"><div class="eyebrow light">ONE PLACE. EVERY REQUEST.</div><h2>Better service<br><em>starts here.</em></h2><p>Raise a complaint, track progress, and stay informed from registration to resolution.</p><div class="auth-points"><div>✓ Track complaint status</div><div>✓ Get in-app notifications</div><div>✓ Transparent service workflow</div></div></div>
+        <div class="auth-card"><div class="auth-tabs"><button class="auth-tab active" data-auth="login">Sign in</button><button class="auth-tab" data-auth="register">Create account</button></div>
+          <form id="login-form"><h3>Welcome back</h3><p class="muted">Sign in to continue to your workspace.</p><label>Email address</label><input type="email" name="email" placeholder="you@example.com" required><label>Password</label><input type="password" name="password" placeholder="Enter your password" required><button class="button button-primary full" type="submit">Sign in <span>→</span></button><div class="demo-note"><b>Demo access</b><br>Admin: admin@example.com / Admin@123<br>User: user@example.com / User@123</div></form>
+          <form id="register-form" class="hidden"><h3>Create your account</h3><p class="muted">Register to raise and track service complaints.</p><label>Full name</label><input name="name" placeholder="Your full name" required><label>Email address</label><input type="email" name="email" placeholder="you@example.com" required><label>Password</label><input type="password" name="password" minlength="6" placeholder="At least 6 characters" required><button class="button button-primary full" type="submit">Create account <span>→</span></button></form>
+        </div>
+      </section>
+
+      <div id="workspace" class="hidden">
+        <section id="dashboard-view" class="view">
+          <div class="welcome"><div><div class="eyebrow">YOUR WORKSPACE</div><h2>Good to see you, <span id="welcome-name">there</span>.</h2><p>Here’s what’s happening with your service requests.</p></div><div class="welcome-icon">✦</div></div>
+          <div class="stat-grid"><article class="stat-card"><div class="stat-top"><span>Total complaints</span><span class="stat-icon purple">▤</span></div><strong id="stat-total">0</strong><small>All requests submitted</small></article><article class="stat-card"><div class="stat-top"><span>Open</span><span class="stat-icon orange">◷</span></div><strong id="stat-open">0</strong><small>Waiting for action</small></article><article class="stat-card"><div class="stat-top"><span>In progress</span><span class="stat-icon blue">↻</span></div><strong id="stat-progress">0</strong><small>Being worked on</small></article><article class="stat-card"><div class="stat-top"><span>Resolved</span><span class="stat-icon green">✓</span></div><strong id="stat-resolved">0</strong><small>Successfully completed</small></article></div>
+          <div class="content-card"><div class="card-heading"><div><h3>Recent complaints</h3><p>Your latest service requests</p></div><button class="text-button" data-goto="complaints">View all →</button></div><div id="recent-table"></div></div>
+          <div class="bottom-grid"><div class="content-card quick-card"><div class="quick-icon">＋</div><div><h3>Something needs attention?</h3><p>Tell us what happened and our team will take it from there.</p><button class="button button-primary" data-goto="new">Register a complaint →</button></div></div><div class="content-card info-card"><div class="info-symbol">i</div><div><h3>How it works</h3><p>Submit your complaint, follow status updates, and check notifications for changes.</p></div></div></div>
+        </section>
+
+        <section id="complaints-view" class="view hidden"><div class="content-card"><div class="card-heading"><div><h3>Complaint history</h3><p>Review and track your submitted requests.</p></div><button class="button button-primary" data-goto="new">＋ New complaint</button></div><div id="complaints-table"></div></div></section>
+
+        <section id="new-view" class="view hidden"><div class="form-card"><div class="form-intro"><div class="form-icon">＋</div><h2>Register a complaint</h2><p>Share the details below so the team can understand and resolve your issue.</p></div><form id="complaint-form"><label>Complaint title</label><input name="title" placeholder="e.g. Projector not working in Room 204" maxlength="120" required><label>Category</label><select name="category" required><option value="">Choose a category</option><option>IT Support</option><option>Maintenance</option><option>Facilities</option><option>Network</option><option>Administration</option><option>Other</option></select><label>Description</label><textarea name="description" rows="5" placeholder="Describe the issue, where it happened, and any useful details…" required></textarea><div class="form-actions"><button type="button" class="button button-secondary" data-goto="dashboard">Cancel</button><button class="button button-primary" type="submit">Submit complaint →</button></div></form></div></section>
+
+        <section id="notifications-view" class="view hidden"><div class="content-card"><div class="card-heading"><div><h3>Notifications</h3><p>Updates about your complaints and assignments.</p></div><button class="text-button" id="refresh-notifications">Refresh ↻</button></div><div id="notifications-list"></div></div></section>
+
+        <section id="admin-view" class="view hidden"><div class="content-card"><div class="card-heading"><div><h3>Admin desk</h3><p>Review all requests, assign ownership, and update progress.</p></div><button class="text-button" id="refresh-admin">Refresh ↻</button></div><div id="admin-table"></div></div></section>
+      </div>
+      <footer>Resolve Service Desk <span>•</span> Complaint & Service Request Management System</footer>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

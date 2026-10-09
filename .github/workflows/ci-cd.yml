@@ -1,0 +1,42 @@
+name: CI-CD
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [gateway, auth, user, complaint, assignment, notification]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with: {python-version: '3.12'}
+    - name: Install dependencies
+      run: pip install -r services/${{ matrix.service }}/requirements.txt
+    - name: Compile Python
+      run: python -m compileall common services/${{ matrix.service }}
+    - name: Docker build
+      run: |
+        if [ "${{ matrix.service }}" = "gateway" ]; then docker build -t complaint-gateway:ci services/gateway; else docker build -t complaint-${{ matrix.service }}:ci -f services/${{ matrix.service }}/Dockerfile .; fi
+
+  push-images:
+    if: github.ref == 'refs/heads/main'
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and push images
+      env:
+        USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      run: |
+        docker build -t $USERNAME/complaint-gateway:latest services/gateway
+        for s in auth user complaint assignment notification; do docker build -t $USERNAME/complaint-$s:latest -f services/$s/Dockerfile .; docker push $USERNAME/complaint-$s:latest; done
+        docker push $USERNAME/complaint-gateway:latest
